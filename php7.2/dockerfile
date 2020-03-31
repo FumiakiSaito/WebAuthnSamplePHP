@@ -1,3 +1,11 @@
+# dockerのイメージは本ファイルから生成
+
 FROM php:7.2-apache
+
+# イメージのビルド時に実行するコマンド
 RUN apt-get update && \
-  docker-php-ext-install pdo_mysql mysqli mbstring
+  apt-get install -y libgmp-dev git && \
+  docker-php-ext-install pdo_mysql mysqli mbstring gmp
+
+# composerのイメージからdockerコマンドだけコピー
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
