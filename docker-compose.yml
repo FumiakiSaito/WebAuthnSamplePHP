@@ -10,6 +10,7 @@ services:
       - ./html:/var/www/html
     ports:
       - 8000:80
+    command: ["/bin/bash", "-c", "cd /var/www/html && composer install"]
     links:
       - mysql:mysql
   mysql:
