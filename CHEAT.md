@@ -1,6 +1,9 @@
 ```
-# コンテナ表示
+# 起動中コンテナ表示
 docker ps
+
+# コンテナ表示
+docker ps -a
 
 # コンテナに入る
 docker exec -it {コンテナID} bash
