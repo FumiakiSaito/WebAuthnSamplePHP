@@ -10,9 +10,26 @@ DB::$user= 'webauthn';
 DB::$password = 'webauthn';
 DB::$dbName = 'webauthn';
 
-$result = DB::query("SELECT * FROM test_table WHERE name = %s", 'fumiaki');
-if ($result) {
-    echo 'MySQL接続OK';
-} else {
-    echo 'MySQL接続NG';
-}
+$users = DB::query("SELECT * FROM test_table");
+echo '<pre>';
+var_dump($users);
+echo '</pre>';
+
+$user = DB::queryFirstRow("SELECT * FROM test_table WHERE name = %s", 'fumiaki');
+echo '<pre>';
+var_dump($user);
+echo '</pre>';
+
+// これはユニークキーが重複するので登録されない
+DB::insertIgnore('test_table', ['email' => 'a.jp', 'name' => 'fumiaki']);
+$users = DB::query("SELECT * FROM test_table");
+echo '<pre>';
+var_dump($users);
+echo '</pre>';
+
+// これはユニークキーが重複しないので登録される
+DB::insertIgnore('test_table', ['email' => time().'.jp', 'name' => 'fumiaki']);
+$users = DB::query("SELECT * FROM test_table");
+echo '<pre>';
+var_dump($users);
+echo '</pre>';
