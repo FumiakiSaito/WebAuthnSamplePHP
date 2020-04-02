@@ -1,5 +1,6 @@
 {
     "require": {
-        "web-auth/webauthn-lib": "^3.1"
+        "web-auth/webauthn-lib": "^3.1",
+        "sergeytsalkov/meekrodb": "2.3.*"
     }
 }

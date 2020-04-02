@@ -1,5 +1,13 @@
 use webauthn;
 
+CREATE TABLE test_table
+(
+    id INT(11) AUTO_INCREMENT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+INSERT INTO test_table (name) VALUES ('fumiaki');
+
 CREATE TABLE users
 (
     id INT(11) AUTO_INCREMENT NOT NULL,
