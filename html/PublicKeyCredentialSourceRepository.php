@@ -6,6 +6,9 @@ use Webauthn\PublicKeyCredentialSourceRepository as PublicKeyCredentialSourceRep
 use Webauthn\PublicKeyCredentialSource;
 use Webauthn\PublicKeyCredentialUserEntity;
 
+/**
+ * 公開鍵クラス
+ */
 class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRepositoryInterface
 {
     /**
@@ -50,7 +53,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
 
         $WebauthnCredential = DB::queryFirstRow("SELECT * FROM webauthn_credentials WHERE public_key_credential_source_id = %s", $data['publicKeyCredentialSourceId']);
 
-        // 存在すれば更新、なければ登録
+        // 存在すれば更新、存在しなければ登録
         if (!$WebauthnCredential) {
             DB::insertIgnore('webauthn_credentials', $data);
         } else {

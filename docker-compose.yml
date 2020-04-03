@@ -39,3 +39,19 @@ services:
       - 4000:80
     volumes:
       - ./phpmyadmin/sessions:/sessions
+  # 既存のコンテナをhttps化するために使用
+  https-portal:
+    image: steveltn/https-portal:1
+    container_name: https_portal
+    ports:
+      - "80:80"
+      - "443:443"
+    tty: true
+    restart: always
+    volumes:
+      - ./Certs/:/var/lib/https-portal/
+    environment:
+      DOMAINS: 'test.webauthndemo -> http://php:8000'
+      STAGE: "local"
+    links:
+      - php

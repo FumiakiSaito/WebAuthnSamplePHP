@@ -39,7 +39,7 @@ CREATE TABLE `webauthn_credentials` (
   `public_key_credential_source_id` varchar(256) NOT NULL COMMENT '認証ID',
   `use_flag` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '使用フラグ[0:無効 1:有効]',
   `user_handle` varchar(256) NOT NULL COMMENT 'ユーザハンドル（ログインID）',
-  `credential` text COMMENT '認証情報(json)'
+  `credential` text COMMENT '認証情報(json)',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_public_key_credential_source_id` (`public_key_credential_source_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Webauthn認証';
