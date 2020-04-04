@@ -8,10 +8,11 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
 
 $rpEntity = new PublicKeyCredentialRpEntity(
-    'Webauthn Server',
-    'localhost' // https環境のドメインか"localhost"以外だと失敗する
+    'WebAuthnDemoRP',
+    'localhost.webauthndemo'
 );
 
+// 公開鍵リポジトリ
 $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
 
 $server = new Server(
@@ -30,7 +31,6 @@ $creator = new ServerRequestCreator(
 
 $serverRequest = $creator->fromGlobals();
 session_start();
-
 
 try {
     $publicKeyCredentialSource = $server->loadAndCheckAttestationResponse(

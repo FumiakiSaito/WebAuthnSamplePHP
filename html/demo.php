@@ -2,7 +2,7 @@
 require_once "./vendor/autoload.php";
 require_once "./db.php";
 require_once "./PublicKeyCredentialSourceRepository.php";
-use Webauthn\Server;
+
 use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialUserEntity;
@@ -12,62 +12,100 @@ use Webauthn\PublicKeyCredentialParameters;
 use Webauthn\PublicKeyCredentialDescriptor;
 use Cose\Algorithms;
 
-if ($_POST['id'] && $_POST['username'] && $_POST['displayname']) {
+if ($_POST['username']) {
 
+    /**
+     * 認証器から公開鍵クレデンシャルを取得するためのパラメータ
+     * 公開鍵クレデンシャル生成オプション(PublicCredentialCreationOptions)
+     * を作成する
+     */
+
+    // -----------------------------------------------
+    // RPサーバの情報設定
+    // -----------------------------------------------
     $rpEntity = new PublicKeyCredentialRpEntity(
-        'Webauthn Server',
-        'localhost' // https環境のドメインか"localhost"以外だと失敗する
+        'WebAuthnDemoRP',        // RPサーバのname
+        'localhost.webauthndemo' // RPサーバのid(ドメイン名を設定する)
     );
 
+    // -----------------------------------------------
+    // RPサーバに登録したいユーザー情報を設定
+    // -----------------------------------------------
     $userEntity = new PublicKeyCredentialUserEntity(
-        $_POST['username'],
-        $_POST['id'],
-        $_POST['displayname']
+        $_POST['username'],        // name
+        $_POST['username'],        // id
+        strtoupper($_POST['name']) // displayName
     );
 
+    // -----------------------------------------------
+    // 同一認証器の登録制限 (デモでは行わない)
+    // -----------------------------------------------
+    // 公開鍵リポジトリから
     $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
-
-    $server = new Server(
-        $rpEntity,
-        $publicKeyCredentialSourceRepository,
-        null
-    );
-
     $credentialSources = $publicKeyCredentialSourceRepository->findAllForUserEntity($userEntity);
-
     $excludeCredentials = array_map(function (PublicKeyCredentialSource $credential) {
         return $credential->getPublicKeyCredentialDescriptor();
     }, $credentialSources);
 
 
-
-    // PINを要求しないように
+    // -----------------------------------------------
+    // 認証器への要求事項を設定
+    //
+    // 1. 認証機の接続方法を指定
+    // 2. 認証器でレジデントクレデンシャルを保管するか
+    // 3. 認証器に糖鎖された生体認証やPINでユーザーを検証するかを指定
+    // -----------------------------------------------
     $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
-        null,
+        AuthenticatorSelectionCriteria:: AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM, // ローミング認証器
         false,
-        /* AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_REQUIRED,*/ // ユーザー検証を必要とする
-        /* AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED*/ // ユーザー検証を可能な限り行う？
-        AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_DISCOURAGED    // ユーザー検証しない
+        AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED   // ユーザー検証を可能な限り行う
     );
 
+    // -----------------------------------------------
+    // リプレイ攻撃を回避するためのワンタイム乱数
+    // -----------------------------------------------
     $challenge = random_bytes(16);
-    $timeout = 10000; // ms
+
+    // -----------------------------------------------
+    // ユーザーの登録操作にかかるタイムアウト時間 (ms)
+    // -----------------------------------------------
+    $timeout = 10000;
+
+    // -----------------------------------------------
+    // クレデンシャルの生成方法を設定
+    //
+    // 1. クレデンシャルの種類: 'public-key'(公開鍵)のみ定義されている
+    // 2. 暗号化アルゴリズムのID
+    // 優先度が高い順に設定
+    // -----------------------------------------------
     $publicKeyCredentialParametersList = [
-        new PublicKeyCredentialParameters('public-key', Algorithms::COSE_ALGORITHM_ES256),
-        new PublicKeyCredentialParameters('public-key', Algorithms::COSE_ALGORITHM_RS256),
+        new PublicKeyCredentialParameters(
+                PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
+                Algorithms::COSE_ALGORITHM_ES256
+        ),
+        new PublicKeyCredentialParameters(
+                PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
+                Algorithms::COSE_ALGORITHM_RS256
+        ),
     ];
 
-/*
-    $creation = $server->generatePublicKeyCredentialCreationOptions(
-        $userEntity,
-        PublicKeyCredentialCreationOptions::ATTESTATION_CONVEYANCE_PREFERENCE_NONE,
-        $excludeCredentials,
-        $authenticatorSelectionCriteria
-    );
-*/
 
+    // -----------------------------------------------
+    // 公開鍵クレデンシャルの生成から除外したいクレデンシャル設定
+    //
+    // 1. クレデンシャルの種類: 'public-key'(公開鍵)のみ定義されている
+    // 2. 除外したいクレデンシャルのID
+    // 3. 認証器の接続方法 ※任意 (USB, NFC BLE, プラットフォーム認証器)
+    // -----------------------------------------------
     $excludedPublicKeyDescriptors = [
-        new PublicKeyCredentialDescriptor(PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY, 'ABCDEFGH…'),
+        new PublicKeyCredentialDescriptor(
+                PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
+                'ABCDEFGH…',
+                [
+                    PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_BLE,
+                    PublicKeyCredentialDescriptor::AUTHENTICATOR_TRANSPORT_NFC
+                ]
+        )
     ];
 
     $publicKeyCredentialCreationOptions = new PublicKeyCredentialCreationOptions(
@@ -78,7 +116,9 @@ if ($_POST['id'] && $_POST['username'] && $_POST['displayname']) {
         $timeout,
         $excludedPublicKeyDescriptors,
         $authenticatorSelectionCriteria,
+        // 認証器のアテステーションステートメントを要求するか (none: 要求しない)
         PublicKeyCredentialCreationOptions::ATTESTATION_CONVEYANCE_PREFERENCE_NONE,
+        // 拡張
         null
     );
 
@@ -171,8 +211,6 @@ if ($_POST['id'] && $_POST['username'] && $_POST['displayname']) {
     <body>
     <form action="" method="POST">
         <input type="text" name="username" placeholder="ユーザー名"/>
-        <input type="text" name="id" placeholder="ID"/>
-        <input type="text" name="displayname" placeholder="表示名"/>
         <input type="submit"/>
     </form>
 

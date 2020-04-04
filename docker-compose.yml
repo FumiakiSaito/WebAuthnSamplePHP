@@ -1,15 +1,18 @@
 version: '3'
 
 services:
+  # php:7.2-apache
   php:
     build:
       context: ./php7.2
       dockerfile: dockerfile # php7.2/dockerfile. 本ファイルからイメージを作成
     volumes:
+      - ./apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf # バーチャルホスト設定
+      - ./apache2/ports.conf:/etc/apache2/ports.conf                             # 起動ポート設定
       - ./php7.2/php.ini:/usr/local/etc/php/php.ini
       - ./html:/var/www/html
     ports:
-      - 8000:80
+      - 8000:8080
 # ↓更新がないとdocker落ちる…
 #    command: ["/bin/bash", "-c", "cd /var/www/html && composer install"]
     links:
@@ -39,7 +42,7 @@ services:
       - 4000:80
     volumes:
       - ./phpmyadmin/sessions:/sessions
-  # 既存のコンテナをhttps化するために使用
+  # Nginxのリバースプロキシ。自己証明書でphpコンテナをhttps化
   https-portal:
     image: steveltn/https-portal:1
     container_name: https_portal
@@ -51,7 +54,7 @@ services:
     volumes:
       - ./Certs/:/var/lib/https-portal/
     environment:
-      DOMAINS: 'test.webauthndemo -> http://php:8000'
+      DOMAINS: 'localhost.webauthndemo -> http://php:8080'
       STAGE: "local"
     links:
       - php
