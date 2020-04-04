@@ -33,7 +33,6 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
     public function findAllForUserEntity(PublicKeyCredentialUserEntity $publicKeyCredentialUserEntity): array
     {
         $WebauthnCredentials = DB::query("SELECT * FROM webauthn_credentials WHERE user_handle = %s", $publicKeyCredentialUserEntity->getId());
-
         return array_map(function ($WebauthnCredential) {
             $array = json_decode($WebauthnCredential['credential'], true);
             return PublicKeyCredentialSource::createFromArray($array);

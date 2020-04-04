@@ -6,8 +6,15 @@ use Webauthn\Server;
 use Webauthn\PublicKeyCredentialRpEntity;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
-var_dump(file_get_contents("php://input"));
+
 session_start();
+
+// -----------------------------------------------------------------
+// 公開鍵情報取得
+// -----------------------------------------------------------------
+$publicKeyCredential = file_get_contents("php://input");
+//$publicKeyCredential = json_decode($publicKeyCredential);
+var_dump($publicKeyCredential);
 
 // -----------------------------------------------------------------
 // RPサーバの作成
@@ -38,7 +45,7 @@ try {
     // チェック
     // -----------------------------------------------------------------
     $publicKeyCredentialSource = $server->loadAndCheckAttestationResponse(
-        file_get_contents("php://input"),
+        $publicKeyCredential,
         unserialize($_SESSION['creation']),
         $serverRequest
     );
