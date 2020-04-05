@@ -52,7 +52,8 @@ services:
     tty: true
     restart: always
     volumes:
-      - ./Certs/:/var/lib/https-portal/
+      - ./https-portal/Certs/:/var/lib/https-portal/     # 証明書
+      - ./https-portal/openssl.cnf:/etc/ssl/openssl.cnf  # ChromeにはSANがないとだめなのでv3_caセクションにsubjectAltNameを設定してみる
     environment:
       DOMAINS: 'localhost.webauthndemo -> http://php:8080'
       STAGE: "local"

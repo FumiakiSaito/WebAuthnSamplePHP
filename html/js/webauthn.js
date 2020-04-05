@@ -151,7 +151,6 @@ function getAssertion(options) {
   console.log(options);
   console.log('<------------------------');
 
-
   options.challenge = Uint8Array.from(window.atob(base64url2base64(options.challenge)), function(c){return c.charCodeAt(0);});
   if (options.allowCredentials) {
     options.allowCredentials = options.allowCredentials.map(function(data) {
@@ -160,8 +159,7 @@ function getAssertion(options) {
     });
   }
 
-
-  // ArrayBufferに変換
+  // InvalidCharacterError: String contains an invalid characterが出る…
 /*
   options.challenge = stringToArrayBuffer(options.challenge.value);
   options.allowCredentials = options.allowCredentials
@@ -171,6 +169,7 @@ function getAssertion(options) {
       }));
 */
 
+  console.log('公開鍵要求(navigator.credentials.get())開始');
 
   // 認証器からアサーションレスポンスを取得するWebAuthn API
   return navigator.credentials.get({

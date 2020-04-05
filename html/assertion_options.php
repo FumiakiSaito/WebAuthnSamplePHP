@@ -39,21 +39,35 @@ $userEntity = new PublicKeyCredentialUserEntity(
     strtoupper($json->username) // displayName
 );
 
+// ユーザーの公開鍵を集める
 $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
 $registeredAuthenticators = $publicKeyCredentialSourceRepository->findAllForUserEntity($userEntity);
-$allowedCredentials = array_map(
-    static function (PublicKeyCredentialSource $credential): PublicKeyCredentialDescriptor {
-        return $credential->getPublicKeyCredentialDescriptor();
-    },
-    $registeredAuthenticators
-);
+
+if ($registeredAuthenticators) {
+    // 公開鍵があれば許容リストに設定
+    $allowedCredentials = array_map(
+        static function (PublicKeyCredentialSource $credential): PublicKeyCredentialDescriptor {
+            return $credential->getPublicKeyCredentialDescriptor();
+        },
+        $registeredAuthenticators
+    );
+} else {
+    // 公開鍵がなかったら空を送ってみる
+    $registeredAuthenticator = new PublicKeyCredentialDescriptor(
+        PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
+        '',
+        []
+    );
+    $allowedCredentials = [$registeredAuthenticator];
+}
 
 
 $publicKeyCredentialRequestOptions = new PublicKeyCredentialRequestOptions(
     random_bytes(32),            // チャレンジ
     60000,                       // タイムアウト
     'localhost.webauthndemo',    // RP ID
-    $allowedCredentials
+    $allowedCredentials,
+    PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_DISCOURAGED
 );
 
 // 後で取り出したいのでセッションに保存しておく
