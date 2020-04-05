@@ -15,8 +15,7 @@ PHPで作成したWebAuthnのデモサイトです。
 ## Usage
 
 #### hostsに接続ドメインを追記  
-※WebAuthnはhttps必須のため自己証明書でhttps化し、  
-下記ドメインでアクセスできるようにします。  
+※自己証明書でhttps化し、下記ドメインでアクセスできるようにします。  
 MACの場合）/private/etc/hosts
 
 ```
@@ -44,7 +43,7 @@ docker exec -it {phpコンテナID} /bin/bash -c "cd /var/www/html && composer i
 ### ブラウザでデモページを開く  
 
 * デモ画面  
-※Chromeは自己証明書のサイトを開けないため、FireFox等を使用する
+※Chromeは自己証明書のサイトを開けないため、Safari, FireFox等を使用する
 
 ```
 open https://localhost.webauthndemo/
@@ -58,5 +57,8 @@ open http://localhost:4000/index.php?lang=ja
 
 
 ## NOTE
+
+* WebAuthnの仕様的には、セキュアなhttpsかlocalhostのみ許容。
+* 使用したPHPパッケージ(web-auth/webauthn-lib)ではhttpsしか許容していないっぽいので自己証明書で対応…
 
 https://www.w3.org/TR/webauthn/

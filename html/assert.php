@@ -1,7 +1,11 @@
 <?php
+/**
+ * 認証器から受け取った署名を、RPサーバの公開鍵で検証するエンドポイント
+ */
 require_once "./vendor/autoload.php";
 require_once "./db.php";
 require_once "./PublicKeyCredentialSourceRepository.php";
+require_once "./PublicKeyCredentialUserEntityRepository.php";
 use Webauthn\Server;
 use Webauthn\PublicKeyCredentialRpEntity;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -13,8 +17,7 @@ session_start();
 // 公開鍵情報取得
 // -----------------------------------------------------------------
 $publicKeyCredential = file_get_contents("php://input");
-//$publicKeyCredential = json_decode($publicKeyCredential);
-var_dump($publicKeyCredential);
+//var_dump($publicKeyCredential);
 
 // -----------------------------------------------------------------
 // RPサーバの作成
@@ -30,6 +33,10 @@ $server = new Server(
     null
 );
 
+
+$UserEntityRepository = new PublicKeyCredentialUserEntityRepository();
+$userEntity = $UserEntityRepository->findWebauthnUserByUsername('taro');
+
 $psr17Factory = new Psr17Factory();
 $creator = new ServerRequestCreator(
     $psr17Factory, // ServerRequestFactory
@@ -44,14 +51,17 @@ try {
     // -----------------------------------------------------------------
     // チェック
     // -----------------------------------------------------------------
-    $publicKeyCredentialSource = $server->loadAndCheckAttestationResponse(
+    $publicKeyCredentialSource = $server->loadAndCheckAssertionResponse(
         $publicKeyCredential,
         unserialize($_SESSION['creation']),
+        $userEntity,
         $serverRequest
     );
-    // 公開鍵クレデンシャルを公開鍵リポジトリに追加
-    $publicKeyCredentialSourceRepository->saveCredentialSource($publicKeyCredentialSource);
-    echo "success!";
+
+    // 公開鍵リポジトリからユーザー情報を取得
+    $user_handle = $publicKeyCredentialSource->getUserHandle();
+    echo $user_handle;
 } catch(\Throwable $exception) {
-    var_dump($exception);
+    var_dump($exception->getTraceAsString());
+    var_dump($exception->getMessage());
 }

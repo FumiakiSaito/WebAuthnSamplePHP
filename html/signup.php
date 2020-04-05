@@ -10,7 +10,7 @@
     <div class="form">
         <input type="text" placeholder="ユーザ名" value="taro" id="username"/>
         <button onclick="registerAsync()">アカウント作成</button>
-        <p class="message">アカウントは作成済みですか？<a href="signin.html">ログイン</a></p>
+        <p class="message">アカウントは作成済みですか？<a href="signin.php">ログイン</a></p>
     </div>
 </div>
 <script src="js/webauthn.js"></script>

@@ -1,3 +1,4 @@
+
 /**
  * 「アカウント作成」ボタン押下の処理
  * @returns {Promise<void>}
@@ -16,11 +17,15 @@ async function registerAsync() {
 
     // 認証器からアテステーションレスポンスを取得
     const credential = await createCredential(optionsJSON);
+
     // RPサーバにアテステーションレスポンスを送信
     const response = await registerFinish(credential);
     // ログインページへ移動
     redirectToSignInPage(response);
+
   } catch (error) {
+
+    alert('エラー発生');
     alert(error);
   }
 }
@@ -41,6 +46,11 @@ function postAttestationOptions() {
 }
 
 function createCredential(options) {
+
+  console.log('公開鍵作成オプション-------->');
+  console.log(options);
+  console.log('<------------------------');
+
   // ArrayBufferに変換
   options.challenge = Uint8Array.from(window.atob(base64url2base64(options.challenge)), function (c) {
     return c.charCodeAt(0);
@@ -57,10 +67,6 @@ function createCredential(options) {
     });
   }
 
-
-
-
-
   // 認証器からアテステーションレスポンスを取得するWebAuthn API
   return navigator.credentials.create({
     'publicKey': options
@@ -68,8 +74,7 @@ function createCredential(options) {
 }
 
 function registerFinish(credential) {
-  const url = '/register.php';
-
+  const url = '/create.php';
   const publicKeyCredential = {
     id: credential.id,
     type: credential.type,
@@ -92,7 +97,7 @@ function registerFinish(credential) {
 function redirectToSignInPage(response) {
   if (response.ok) {
     alert('登録しました');
-    location.href = 'index.php'
+    location.href = 'signin.php'
   } else {
     alert(response);
   }
@@ -100,12 +105,11 @@ function redirectToSignInPage(response) {
 
 
 
-/*----------------------------------------------------
- * 認証
- *--------------------------------------------------*/
-
+/**
+ * 「ログイン」ボタン押下の処理
+ * @returns {Promise<void>}
+ */
 async function authenticationAsync() {
-  // ※サンプルコードでは、WebAuthn API対応判定を追加
   if (!window.PublicKeyCredential) {
     alert("未対応のブラウザです");
     return;
@@ -121,14 +125,15 @@ async function authenticationAsync() {
     const response = await authenticationFinish(assertion);
     signedIn(response);
   } catch (error) {
+    alert('エラー発生');
     alert(error);
   }
 }
 
 function postAssertionOptions() {
-  const url = '/assertion/options';
+  const url = '/assertion_options.php';
   const data = {
-    'email': document.getElementById('email').value
+    'username': document.getElementById('username').value
   };
 
   return fetch(url, {
@@ -141,13 +146,31 @@ function postAssertionOptions() {
 }
 
 function getAssertion(options) {
+
+  console.log('公開鍵要求オプション-------->');
+  console.log(options);
+  console.log('<------------------------');
+
+
+  options.challenge = Uint8Array.from(window.atob(base64url2base64(options.challenge)), function(c){return c.charCodeAt(0);});
+  if (options.allowCredentials) {
+    options.allowCredentials = options.allowCredentials.map(function(data) {
+      data.id = Uint8Array.from(window.atob(base64url2base64(data.id)), function(c){return c.charCodeAt(0);});
+      return data;
+    });
+  }
+
+
   // ArrayBufferに変換
+/*
   options.challenge = stringToArrayBuffer(options.challenge.value);
   options.allowCredentials = options.allowCredentials
     .map(credential => Object.assign({},
       credential, {
         id: base64ToArrayBuffer(credential.id),
       }));
+*/
+
 
   // 認証器からアサーションレスポンスを取得するWebAuthn API
   return navigator.credentials.get({
@@ -156,14 +179,20 @@ function getAssertion(options) {
 }
 
 function authenticationFinish(assertion) {
-  const url = '/assertion/result';
+  const url = '/assert.php';
+
   const data = {
-    'credentialId': arrayBufferToBase64(assertion.rawId),
-    'clientDataJSON': arrayBufferToBase64(assertion.response.clientDataJSON),
-    'authenticatorData': arrayBufferToBase64(assertion.response.authenticatorData),
-    'signature': arrayBufferToBase64(assertion.response.signature),
-    'userHandle': arrayBufferToBase64(assertion.response.userHandle),
+    id: assertion.id,
+    type: assertion.type,
+    rawId: arrayToBase64String(new Uint8Array(assertion.rawId)),
+    response: {
+      authenticatorData: arrayToBase64String(new Uint8Array(assertion.response.authenticatorData)),
+      clientDataJSON: arrayToBase64String(new Uint8Array(assertion.response.clientDataJSON)),
+      signature: arrayToBase64String(new Uint8Array(assertion.response.signature)),
+      userHandle: assertion.response.userHandle ? arrayToBase64String(new Uint8Array(assertion.response.userHandle)) : null
+    }
   };
+
   return fetch(url, {
     method: 'POST',
     body: JSON.stringify(data),

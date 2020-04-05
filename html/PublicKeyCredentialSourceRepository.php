@@ -7,7 +7,7 @@ use Webauthn\PublicKeyCredentialSource;
 use Webauthn\PublicKeyCredentialUserEntity;
 
 /**
- * 公開鍵クラス
+ * 公開鍵情報クラス
  */
 class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRepositoryInterface
 {

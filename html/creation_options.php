@@ -1,4 +1,11 @@
 <?php
+/**
+ * 認証器から公開鍵クレデンシャルを取得するためのパラメータ
+ * 公開鍵クレデンシャル生成オプション(PublicCredentialCreationOptions)を作成するエンドポイント
+ *
+ * 本パラメータはJavaScriptの公開鍵クレデンシャル生成API（navigator.credentials.create）で使用する
+ */
+
 require_once "./vendor/autoload.php";
 require_once "./db.php";
 require_once "./PublicKeyCredentialSourceRepository.php";
@@ -11,13 +18,6 @@ use Webauthn\AuthenticatorSelectionCriteria;
 use Webauthn\PublicKeyCredentialParameters;
 use Webauthn\PublicKeyCredentialDescriptor;
 use Cose\Algorithms;
-
-/**
- * 認証器から公開鍵クレデンシャルを取得するためのパラメータである
- * 公開鍵クレデンシャル生成オプション(PublicCredentialCreationOptions)を作成する
- *
- * 本パラメータはJavaScriptの公開鍵クレデンシャル生成API（navigator.credentials.create）で使用する
- */
 
 // -----------------------------------------------------------------
 // パラメータ取得
@@ -35,7 +35,7 @@ $rpEntity = new PublicKeyCredentialRpEntity(
 );
 
 // -----------------------------------------------------------------
-// RPサーバに登録したいユーザー情報を設定
+// RPサーバに「登録したいユーザー情報」を設定
 // -----------------------------------------------------------------
 $userEntity = new PublicKeyCredentialUserEntity(
     $json->username,        // name
@@ -92,6 +92,7 @@ $publicKeyCredentialParametersList = [
 // 2. 除外したいクレデンシャルのID
 // 3. 認証器の接続方法 ※任意 (USB, NFC BLE, プラットフォーム認証器)
 // -----------------------------------------------------------------
+
 $excludedPublicKeyDescriptors = [
     new PublicKeyCredentialDescriptor(
         PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
@@ -102,13 +103,14 @@ $excludedPublicKeyDescriptors = [
         ]
     )
 ];
+
 // 例えば公開鍵リポジトリに登録済みの認証器を除外したい場合は、以下のようにする
 /*
-    $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
-    $credentialSources = $publicKeyCredentialSourceRepository->findAllForUserEntity($userEntity);
-    $excludedPublicKeyDescriptors = array_map(function (PublicKeyCredentialSource $credential) {
-        return $credential->getPublicKeyCredentialDescriptor();
-    }, $credentialSources);
+$publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
+$credentialSources = $publicKeyCredentialSourceRepository->findAllForUserEntity($userEntity);
+$excludedPublicKeyDescriptors = array_map(function (PublicKeyCredentialSource $credential) {
+    return $credential->getPublicKeyCredentialDescriptor();
+}, $credentialSources);
 */
 
 // -----------------------------------------------------------------
