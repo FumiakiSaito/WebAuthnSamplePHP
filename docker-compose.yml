@@ -1,11 +1,14 @@
 version: '3'
 
 services:
-  # php:7.2-apache
-  php:
+  #################################################
+  # PHP & Apache
+  #################################################
+  php-apache:
     build:
       context: ./php7.2
       dockerfile: dockerfile # php7.2/dockerfile. 本ファイルからイメージを作成
+    container_name: php-apache
     volumes:
       - ./apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf # バーチャルホスト設定
       - ./apache2/ports.conf:/etc/apache2/ports.conf                             # 起動ポート設定
@@ -13,15 +16,19 @@ services:
       - ./html:/var/www/html
     ports:
       - 8000:8080
-# ↓更新がないとdocker落ちる…
+# ↓更新がないとdocker落ちる？よくわからん
 #    command: ["/bin/bash", "-c", "cd /var/www/html && composer install"]
     links:
       - mysql:mysql
+  #################################################
+  # MySQL
+  #################################################
   mysql:
     image: mysql:5.7
+    #container_name: mysql57 # コンテナ名つけるとPHPからDBに接続できなくなる
     volumes:
-      - ./mysql/init:/docker-entrypoint-initdb.d
-      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d # テーブル作成クエリ
+      - ./mysql/data:/var/lib/mysql              # 物理データ
     ports:
       - 13306:3306
     environment:
@@ -29,8 +36,12 @@ services:
       - MYSQL_DATABASE=webauthn
       - MYSQL_USER=webauthn
       - MYSQL_PASSWORD=webauthn
+  #################################################
+  # PhpMyAdmin
+  #################################################
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
@@ -42,7 +53,9 @@ services:
       - 4000:80
     volumes:
       - ./phpmyadmin/sessions:/sessions
-  # Nginxのリバースプロキシ。自己証明書でphpコンテナをhttps化
+  #################################################
+  # Nginx リバースプロキシ。自己証明書でphpコンテナをhttps化
+  #################################################
   https-portal:
     image: steveltn/https-portal:1
     container_name: https_portal
@@ -52,10 +65,9 @@ services:
     tty: true
     restart: always
     volumes:
-      - ./https-portal/Certs/:/var/lib/https-portal/     # 証明書
-      - ./https-portal/openssl.cnf:/etc/ssl/openssl.cnf  # ChromeにはSANがないとだめなのでv3_caセクションにsubjectAltNameを設定してみる
+      - ./https-portal/Certs/:/var/lib/https-portal/ # 証明書
     environment:
-      DOMAINS: 'localhost.webauthndemo -> http://php:8080'
+      DOMAINS: 'localhost.webauthndemo -> http://php-apache:8080'
       STAGE: "local"
     links:
-      - php
+      - php-apache

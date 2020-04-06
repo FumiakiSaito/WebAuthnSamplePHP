@@ -36,8 +36,7 @@ docker-compose up -d
 #### PHPのパッケージをインストール
 
 ```
-docker ps
-docker exec -it {phpコンテナID} /bin/bash -c "cd /var/www/html && composer install"
+docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
 ```
 
 ### ブラウザでデモページを開く  
