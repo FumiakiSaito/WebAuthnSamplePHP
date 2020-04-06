@@ -18,7 +18,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
      */
     public function findOneByCredentialId(string $publicKeyCredentialId): ?PublicKeyCredentialSource
     {
-        if ($WebauthnCredential = DB::queryFirstRow("SELECT * FROM webauthn_credentials WHERE public_key_credential_source_id = %s", base64_encode($publicKeyCredentialId))) {
+        if ($WebauthnCredential = DB::queryFirstRow("SELECT * FROM credentials WHERE credential_id = %s", base64_encode($publicKeyCredentialId))) {
             $array = json_decode($WebauthnCredential['credential'], true);
             return PublicKeyCredentialSource::createFromArray($array);
         }
@@ -32,7 +32,7 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
      */
     public function findAllForUserEntity(PublicKeyCredentialUserEntity $publicKeyCredentialUserEntity): array
     {
-        $WebauthnCredentials = DB::query("SELECT * FROM webauthn_credentials WHERE user_handle = %s", $publicKeyCredentialUserEntity->getId());
+        $WebauthnCredentials = DB::query("SELECT * FROM credentials WHERE user_handle = %s", $publicKeyCredentialUserEntity->getId());
         return array_map(function ($WebauthnCredential) {
             $array = json_decode($WebauthnCredential['credential'], true);
             return PublicKeyCredentialSource::createFromArray($array);
@@ -46,17 +46,17 @@ class PublicKeyCredentialSourceRepository implements PublicKeyCredentialSourceRe
      */
     public function saveCredentialSource(PublicKeyCredentialSource $publicKeyCredentialSource): void
     {
-        $data['public_key_credential_source_id'] = base64_encode($publicKeyCredentialSource->getPublicKeyCredentialId());
+        $data['credential_id'] = base64_encode($publicKeyCredentialSource->getPublicKeyCredentialId());
         $data['user_handle'] = $publicKeyCredentialSource->getUserHandle();
         $data['credential'] = json_encode($publicKeyCredentialSource);
 
-        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM webauthn_credentials WHERE public_key_credential_source_id = %s", $data['publicKeyCredentialSourceId']);
+        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM credentials WHERE credential_id = %s", $data['publicKeyCredentialSourceId']);
 
         // 存在すれば更新、存在しなければ登録
         if (!$WebauthnCredential) {
-            DB::insertIgnore('webauthn_credentials', $data);
+            DB::insertIgnore('credentials', $data);
         } else {
-            DB::insertUpdate('webauthn_credentials', $data);
+            DB::insertUpdate('credentials', $data);
         }
     }
 

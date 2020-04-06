@@ -18,7 +18,7 @@ class PublicKeyCredentialUserEntityRepository
      */
     public function findWebauthnUserByUsername(string $username): ?PublicKeyCredentialUserEntity
     {
-        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM webauthn_credentials WHERE user_handle = %s", $username);
+        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM credentials WHERE user_handle = %s", $username);
 
         if (!$WebauthnCredential) {
             return null;
@@ -37,7 +37,7 @@ class PublicKeyCredentialUserEntityRepository
      */
     public function findWebauthnUserByUserHandle(string $userHandle): ?PublicKeyCredentialUserEntity
     {
-        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM webauthn_credentials WHERE user_handle = %s", $userHandle);
+        $WebauthnCredential = DB::queryFirstRow("SELECT * FROM credentials WHERE user_handle = %s", $userHandle);
 
         if (!$WebauthnCredential) {
             return null;
