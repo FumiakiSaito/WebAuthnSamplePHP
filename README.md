@@ -60,6 +60,7 @@ open http://localhost:4000/index.php?lang=ja
 
 * WebAuthnの仕様的には、セキュアなhttpsかlocalhostのみ許容。
 * 使用したPHPパッケージ(web-auth/webauthn-lib)ではhttpsしか許容していないっぽいので自己証明書で対応…
+* Issueもある。https://github.com/web-auth/webauthn-framework/issues/125
 
 * 公開鍵要求でallowdCredentialsに入っていない要求を出したときの挙動がブラウザによって違う
 * * Firefox: 接続要求は出るが「InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable」が出る
