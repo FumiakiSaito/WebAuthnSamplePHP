@@ -43,6 +43,7 @@ $userEntity = new PublicKeyCredentialUserEntity(
 $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
 $registeredAuthenticators = $publicKeyCredentialSourceRepository->findAllForUserEntity($userEntity);
 
+$allowedCredentials = [];
 if ($registeredAuthenticators) {
     // 公開鍵があれば許容リストに設定
     $allowedCredentials = array_map(
@@ -51,16 +52,7 @@ if ($registeredAuthenticators) {
         },
         $registeredAuthenticators
     );
-} else {
-    // 公開鍵がなかったら空を送ってみる
-    $registeredAuthenticator = new PublicKeyCredentialDescriptor(
-        PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
-        '',
-        []
-    );
-    $allowedCredentials = [$registeredAuthenticator];
 }
-
 
 $publicKeyCredentialRequestOptions = new PublicKeyCredentialRequestOptions(
     random_bytes(32),            // チャレンジ

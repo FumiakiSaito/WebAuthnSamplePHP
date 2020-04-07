@@ -127,6 +127,6 @@ mysql/data/*
 html/vendor
 
 # https-portal Certs
-https-portal/Certs
+https-portal/Certs/*
 
 # End of https://www.gitignore.io/api/macos,phpstorm
