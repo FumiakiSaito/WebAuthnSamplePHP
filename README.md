@@ -3,8 +3,8 @@
 ## Description
 
 PHPで作成したWebAuthnのデモサイトです。  
-数コマンドでサイトが起動し、  
-認証器の登録・認証を試す事ができます。
+Dockerでローカル環境が起動し、  
+実際に認証器の登録・認証を試す事ができます。
 
 
 
@@ -12,43 +12,34 @@ PHPで作成したWebAuthnのデモサイトです。
 
 * Docker
 
-## Usage
+## How to use
 
-#### hostsに接続ドメインを追記  
-※自己証明書でhttps化し、下記ドメインでアクセスできるようにします。  
-MACの場合）/private/etc/hosts
+hostsにドメインを追記:  
+※自己証明書でhttps化してアクセスできるようにするため
 
 ```
 127.0.0.1 localhost.webauthndemo
 ```
 
-#### dockerコンテナ起動  
-下記コンテナが起動します。
-* PHP7 & Apache2
-* PHPMyAdmin
-* MySQL5.7
-* Nginx (自己証明書でhttps化のためのリバースプロキシ)
-
+dockerコンテナ起動:  
 ```
-docker-compose up -d
+$ docker-compose up -d
 ```
 
-#### PHPのパッケージをインストール
-
+PHPパッケージインストール:
 ```
-docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
+$ docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
 ```
 
-### ブラウザでデモページを開く  
+デモページを開く: 
 
-* デモ画面  
 ※Chromeは自己証明書のサイトを開けないため、Safari, FireFox等を使用する
 
 ```
 open https://localhost.webauthndemo/
 ```
 
-* phpMyAdmin
+phpMyAdmin: 
 
 ```
 open http://localhost:4000/index.php?lang=ja
@@ -57,13 +48,15 @@ open http://localhost:4000/index.php?lang=ja
 
 ## NOTE
 
-* WebAuthnの仕様的には、セキュアなhttpsかlocalhostのみ許容。
-* 使用したPHPパッケージ(web-auth/webauthn-lib)ではhttpsしか許容していないっぽいので自己証明書で対応…
-* Issueもある。https://github.com/web-auth/webauthn-framework/issues/125
+###  起動コンテナ
 
-* 公開鍵要求でallowdCredentialsに入っていない要求を出したときの挙動がブラウザによって違う
-* * Firefox: 接続要求は出るが「InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable」が出る
-* * Safari: 接続要求自体でない
+* PHP7 & Apache2
+* PHPMyAdmin
+* MySQL5.7
+* Nginx (自己証明書でhttps化のためのリバースプロキシ)
 
-
-https://www.w3.org/TR/webauthn/
+### 制限・注意
+WebAuthnの仕様的にはhttpsかlocalhostのみ許容  
+しかし使用する[web-auth/webauthn-lib](https://github.com/web-auth/webauthn-framework/)ではhttpsしか許容しておらずエラーとなる。対応予定？ [Issue](https://github.com/web-auth/webauthn-framework/issues/125)  
+そのため自己証明書を自動で生成しリバプロになるDocker:[https-portal](https://github.com/SteveLTN/https-portal)で対応した  
+FirefoxやSafariはChromeと挙動が違う場合がある…
