@@ -25,7 +25,7 @@ services:
   #################################################
   mysql:
     image: mysql:5.7
-    #container_name: mysql57 # コンテナ名つけるとPHPからDBに接続できなくなる
+    container_name: mysql57
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d # テーブル作成クエリ
       - ./mysql/data:/var/lib/mysql              # 物理データ

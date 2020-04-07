@@ -26,7 +26,8 @@ dockerコンテナ起動:
 $ docker-compose up -d
 ```
 
-PHPパッケージインストール:
+
+パッケージインストール:
 ```
 $ docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
 ```
