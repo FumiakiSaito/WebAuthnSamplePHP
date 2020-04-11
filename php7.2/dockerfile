@@ -9,3 +9,6 @@ RUN apt-get update && \
 
 # composerのイメージからdockerコマンドだけコピー
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# これするとdocker-compose upでコンテナが終了してしまう
+# CMD ["/bin/bash", "-c", "cd /var/www/html && composer install"]

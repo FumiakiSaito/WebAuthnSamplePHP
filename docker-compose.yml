@@ -7,7 +7,7 @@ services:
   php-apache:
     build:
       context: ./php7.2
-      dockerfile: dockerfile # php7.2/dockerfile. 本ファイルからイメージを作成
+      dockerfile: dockerfile # php7.2/dockerfileファイルからイメージを作成
     container_name: php-apache
     volumes:
       - ./apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf # バーチャルホスト設定
@@ -16,8 +16,6 @@ services:
       - ./html:/var/www/html
     ports:
       - 8000:8080
-# ↓更新がないとdocker落ちる？よくわからん
-#    command: ["/bin/bash", "-c", "cd /var/www/html && composer install"]
     links:
       - mysql:mysql
   #################################################
@@ -65,7 +63,7 @@ services:
     tty: true
     restart: always
     volumes:
-      - ./https-portal/Certs/:/var/lib/https-portal/ # 証明書
+      - ./https-portal/Certs/:/var/lib/https-portal/ # 自己証明書ディレクトリ
     environment:
       DOMAINS: 'localhost.webauthndemo -> http://php-apache:8080'
       STAGE: "local"

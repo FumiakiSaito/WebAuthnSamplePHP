@@ -1,19 +1,24 @@
 ```
+
+# パッケージインストール:
+$ docker exec -it {コンテナID} /bin/bash -c "cd /var/www/html && composer install"
+
+
 # 起動中コンテナ表示
-docker ps
+$ docker ps
 
 # コンテナ表示
-docker ps -a
+$ docker ps -a
 
 # コンテナに入る
-docker exec -it {コンテナID} bash
+$ docker exec -it {コンテナID} bash
 
 # コンテナに入らずコマンド実行
-docker exec -it {コンテナID} /bin/bash -c "コマンド"
+$ docker exec -it {コンテナID} /bin/bash -c "コマンド"
 
 # 停止&削除
-docker-compose down
+$ docker-compose down
 
 # 滅びの呪文 (全削除)
-docker-compose down --rmi all --volumes
+$ docker-compose down --rmi all --volumes
 ```

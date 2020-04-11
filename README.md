@@ -37,13 +37,13 @@ $ docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
 ※Chromeは自己証明書のサイトを開けないため、Safari, FireFox等を使用する
 
 ```
-open https://localhost.webauthndemo/
+$ open https://localhost.webauthndemo/signup.php
 ```
 
 phpMyAdmin: 
 
 ```
-open http://localhost:4000/index.php?lang=ja
+$ open http://localhost:4000/index.php?lang=ja
 ```
 
 
