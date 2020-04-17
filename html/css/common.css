@@ -1,5 +1,6 @@
 div.login-page {
-    width: 600px;
+    width: 780px;
+    background-color: aliceblue;
 }
 div.login-page>div.form {
 }
