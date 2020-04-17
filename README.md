@@ -16,7 +16,6 @@ Dockerでローカル環境が起動し、
 
 hostsにドメインを追記:  
 ※自己証明書でhttps化してアクセスできるようにするため
-
 ```
 127.0.0.1 localhost.webauthndemo
 ```
@@ -26,25 +25,18 @@ dockerコンテナ起動:
 $ docker-compose up -d
 ```
 
-
 パッケージインストール:
 ```
 $ docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
 ```
 
-デモページを開く: 
+
+|  サービス  |  URL  |
+| ---- | ---- |
+|  Web  |  https://localhost.webauthndemo/signup.php  |
+|  phpMyAdmin  |  http://localhost:4000/index.php?lang=ja  |
 
 ※Chromeは自己証明書のサイトを開けないため、Safari, FireFox等を使用する
-
-```
-$ open https://localhost.webauthndemo/signup.php
-```
-
-phpMyAdmin: 
-
-```
-$ open http://localhost:4000/index.php?lang=ja
-```
 
 
 ## NOTE
