@@ -6,6 +6,8 @@ PHPで作成したWebAuthnのデモサイトです。
 Dockerでローカル環境が起動し、  
 実際に認証器の登録・認証を試す事ができます。
 
+![demo](https://user-images.githubusercontent.com/11142740/79528309-a043a100-80a4-11ea-8052-3635d8e19b2a.gif)
+
 
 
 ## Requirement
@@ -57,7 +59,7 @@ $ open http://localhost:4000/index.php?lang=ja
 * Nginx (自己証明書でhttps化のためのリバースプロキシ)
 
 ### 制限・注意
-WebAuthnの仕様的にはhttpsかlocalhostのみ許容  
-しかし使用する[web-auth/webauthn-lib](https://github.com/web-auth/webauthn-framework/)ではhttpsしか許容しておらずエラーとなる。対応予定？ [Issue](https://github.com/web-auth/webauthn-framework/issues/125)  
-そのため自己証明書を自動で生成しリバプロになるDocker:[https-portal](https://github.com/SteveLTN/https-portal)で対応した  
-FirefoxやSafariはChromeと挙動が違う場合がある…
+* WebAuthnの仕様的にはhttpsかlocalhostのみ許容  
+* しかし使用する[web-auth/webauthn-lib](https://github.com/web-auth/webauthn-framework/)ではhttpsしか許容しておらずエラーとなる。対応予定？ [Issue](https://github.com/web-auth/webauthn-framework/issues/125)  
+* そのため自己証明書を自動で生成しリバプロになるDocker:[https-portal](https://github.com/SteveLTN/https-portal)で対応した  
+* FirefoxやSafariはChromeと挙動が違う場合がある…
