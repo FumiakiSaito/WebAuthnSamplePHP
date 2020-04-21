@@ -1,4 +1,4 @@
-# WebAuthnSamplePHP
+# WebAuthnPHP-DEMO
 
 ## Description
 
