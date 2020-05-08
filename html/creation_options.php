@@ -30,8 +30,8 @@ $json = json_decode($json);
 // RPサーバの情報設定
 // -----------------------------------------------------------------
 $rpEntity = new PublicKeyCredentialRpEntity(
-    'WebAuthnDemoRP',        // RPサーバのname
-    'localhost.webauthndemo' // RPサーバのid(ドメイン名を設定する)
+    'WebAuthnDemoRP',  // RPサーバのname
+    'localhost'        // RPサーバのid(ドメイン名を設定する)
 );
 
 // -----------------------------------------------------------------
@@ -53,7 +53,9 @@ $userEntity = new PublicKeyCredentialUserEntity(
 $authenticatorSelectionCriteria = new AuthenticatorSelectionCriteria(
     AuthenticatorSelectionCriteria:: AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM, // ローミング認証器
     false,
-    AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED   // ユーザー検証を可能な限り行う
+    //AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED   // ユーザー検証を可能な限り行う
+    AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_DISCOURAGED   // ユーザー検証を行わない
+
 );
 
 // -----------------------------------------------------------------
@@ -64,7 +66,7 @@ $challenge = random_bytes(16);
 // -----------------------------------------------------------------
 // ユーザーの登録操作にかかるタイムアウト時間 (ms)
 // -----------------------------------------------------------------
-$timeout = 10000;
+$timeout = 30000;
 
 // -----------------------------------------------------------------
 // クレデンシャルの生成方法を設定

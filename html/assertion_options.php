@@ -26,8 +26,8 @@ $json = json_decode($json);
 // RPサーバの情報設定
 // -----------------------------------------------------------------
 $rpEntity = new PublicKeyCredentialRpEntity(
-    'WebAuthnDemoRP',        // RPサーバのname
-    'localhost.webauthndemo' // RPサーバのid(ドメイン名を設定する)
+    'WebAuthnDemoRP', // RPサーバのname
+    'localhost'       // RPサーバのid(ドメイン名を設定する)
 );
 
 // -----------------------------------------------------------------
@@ -57,7 +57,7 @@ if ($registeredAuthenticators) {
 $publicKeyCredentialRequestOptions = new PublicKeyCredentialRequestOptions(
     random_bytes(32),            // チャレンジ
     60000,                       // タイムアウト
-    'localhost.webauthndemo',    // RP ID
+    'localhost',                 // RP ID
     $allowedCredentials,
     PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_DISCOURAGED
 );

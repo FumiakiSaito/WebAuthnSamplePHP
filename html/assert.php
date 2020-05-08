@@ -23,8 +23,8 @@ $publicKeyCredential = file_get_contents("php://input");
 // RPサーバの作成
 // -----------------------------------------------------------------
 $rpEntity = new PublicKeyCredentialRpEntity(
-    'WebAuthnDemoRP',        // RPサーバのname
-    'localhost.webauthndemo' // RPサーバのid(ドメイン名を設定する)
+    'WebAuthnDemoRP', // RPサーバのname
+    'localhost'       // RPサーバのid(ドメイン名を設定する)
 );
 $publicKeyCredentialSourceRepository = new PublicKeyCredentialSourceRepository();
 $server = new Server(

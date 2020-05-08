@@ -54,18 +54,18 @@ services:
   #################################################
   # Nginx リバースプロキシ。自己証明書でphpコンテナをhttps化
   #################################################
-  https-portal:
-    image: steveltn/https-portal:1
-    container_name: https_portal
-    ports:
-      - "80:80"
-      - "443:443"
-    tty: true
-    restart: always
-    volumes:
-      - ./https-portal/Certs/:/var/lib/https-portal/ # 自己証明書ディレクトリ
-    environment:
-      DOMAINS: 'localhost.webauthndemo -> http://php-apache:8080'
-      STAGE: "local"
-    links:
-      - php-apache
+  #https-portal:
+  #  image: steveltn/https-portal:1
+  #  container_name: https_portal
+  #  ports:
+  #    - "80:80"
+  #    - "443:443"
+  #  tty: true
+  #  restart: always
+  #  volumes:
+  #    - ./https-portal/Certs/:/var/lib/https-portal/ # 自己証明書ディレクトリ
+  #  environment:
+  #    DOMAINS: 'localhost.webauthndemo -> http://php-apache:8080'
+  #    STAGE: "local"
+  #  links:
+  #    - php-apache
