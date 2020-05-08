@@ -6,7 +6,7 @@ PHPで作成したWebAuthnのデモサイトです。
 Dockerでローカル環境が起動し、  
 実際に認証器の登録・認証を試す事ができます。
 
-![demo](https://user-images.githubusercontent.com/11142740/81426000-87a24480-9193-11ea-9b55-a71d9866cc8b.gif)
+![demo](https://user-images.githubusercontent.com/11142740/81427241-7bb78200-9195-11ea-846e-1670ce8f9d36.gif)
 
 ## Requirement
 
