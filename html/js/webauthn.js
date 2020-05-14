@@ -216,12 +216,10 @@ function signedIn(response) {
  *--------------------------------------------------*/
 
 
-// demo.phpから追加
 function arrayToBase64String(a) {
   return btoa(String.fromCharCode(...a));
 }
 
-// demo.phpから追加
 function base64url2base64(input) {
   input = input
     .replace(/=/g, "")
@@ -239,8 +237,7 @@ function base64url2base64(input) {
   return input;
 }
 
-
-
+/*
 // 文字列をArrayBufferに変換
 function stringToArrayBuffer(string) {
   return new TextEncoder().encode(string);
@@ -255,3 +252,4 @@ function base64ToArrayBuffer(base64String) {
 function arrayBufferToBase64(arrayBuffer) {
   return btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 }
+*/
