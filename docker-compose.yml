@@ -8,7 +8,7 @@ services:
     build:
       context: ./php7.2
       dockerfile: dockerfile # php7.2/dockerfileファイルからイメージを作成
-    container_name: php-apache
+    container_name: webauthn-php-apache
     volumes:
       - ./apache2/000-default.conf:/etc/apache2/sites-available/000-default.conf # バーチャルホスト設定
       - ./apache2/ports.conf:/etc/apache2/ports.conf                             # 起動ポート設定
@@ -23,7 +23,7 @@ services:
   #################################################
   mysql:
     image: mysql:5.7
-    container_name: mysql57
+    container_name: webauthn-mysql57
     volumes:
       - ./mysql/init:/docker-entrypoint-initdb.d # テーブル作成クエリ
       - ./mysql/data:/var/lib/mysql              # 物理データ
@@ -39,7 +39,7 @@ services:
   #################################################
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: webauthn-phpmyadmin
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
@@ -56,7 +56,7 @@ services:
   #################################################
   #https-portal:
   #  image: steveltn/https-portal:1
-  #  container_name: https_portal
+  #  container_name: webauthn-https_portal
   #  ports:
   #    - "80:80"
   #    - "443:443"

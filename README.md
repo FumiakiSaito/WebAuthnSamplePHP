@@ -21,13 +21,13 @@ $ docker-compose up -d
 
 パッケージインストール:
 ```
-$ docker exec -it php-apache /bin/bash -c "cd /var/www/html && composer install"
+$ docker exec -it webauthn-php-apache /bin/bash -c "cd /var/www/html && composer install"
 ```
 
 
 |  サービス  |  URL  |
 | ---- | ---- |
-|  Web  |  https://localhost:8000/signup.php  |
+|  Web  |  http://localhost:8000/signup.php  |
 |  phpMyAdmin  |  http://localhost:4000/index.php?lang=ja  |
 
 
